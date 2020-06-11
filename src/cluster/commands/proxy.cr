@@ -21,6 +21,9 @@ module Redis::Cluster::Commands
   proxy ttl, key
   proxy type, key
 
+  # Channels
+  proxy publish, key, message
+
   # Lists
   proxy rpush, key, *values
   proxy lpush, key, *values
