@@ -23,8 +23,8 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   redis-cluster:
-    github: maiha/redis-cluster.cr
-    version: 0.8.3
+    github: caspiano/redis-cluster.cr
+    version: 0.8.4
 ```
 
 ## Usage
@@ -124,7 +124,7 @@ end
 4. Push to the branch (git push origin my-new-feature)
 5. Create a new Pull Request
 
-
 ## Contributors
 
 - [maiha](https://github.com/maiha) maiha - creator, maintainer
+- [Caspian Baska](https://github.com/caspiano) caspiano - contributor
