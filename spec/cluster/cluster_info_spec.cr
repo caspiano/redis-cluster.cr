@@ -8,7 +8,7 @@ describe Redis::Cluster::ClusterInfo do
     EOF
 
   describe "#active?" do
-    zero = Redis::Cluster::Counts.new{ 0_i64 }
+    zero = Redis::Cluster::Counts.new { 0_i64 }
 
     it "return true when count = 0" do
       node = info.nodes.first
@@ -95,7 +95,7 @@ describe Redis::Cluster::ClusterInfo do
 
       info.nodes.map(&.signature).should eq([
         "2db26dd98c89a37be9a97ff4b87735c568efe535:0-1000,1500,2001-3000",
-        "c795516499b9b71b6ba0b14ca5202cea3dd27749:"
+        "c795516499b9b71b6ba0b14ca5202cea3dd27749:",
       ])
     end
   end
@@ -124,7 +124,7 @@ describe Redis::Cluster::ClusterInfo do
 
     it "should ignore vars or unknown entry" do
       info = Redis::Cluster::ClusterInfo.parse(nodes)
-      info.nodes.map(&.addr.port).sort.should eq([7001,7002,7003])
+      info.nodes.map(&.addr.port).sort.should eq([7001, 7002, 7003])
     end
 
     it "should raise when strict mode" do

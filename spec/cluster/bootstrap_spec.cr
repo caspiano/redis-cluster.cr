@@ -44,14 +44,14 @@ describe Redis::Cluster::Bootstrap do
 
   describe "equality" do
     it "should test by value" do
-      bootstrap("a",1).should eq(bootstrap("a",1))
-      bootstrap("a",1).should_not eq(bootstrap("a",2))
-      bootstrap("a",1).should_not eq(bootstrap("b",1))
+      bootstrap("a", 1).should eq(bootstrap("a", 1))
+      bootstrap("a", 1).should_not eq(bootstrap("a", 2))
+      bootstrap("a", 1).should_not eq(bootstrap("b", 1))
 
-      bootstrap("a",1,"p").should eq(bootstrap("a",1,"p"))
-      bootstrap("a",1,"p").should_not eq(bootstrap("a",1))
-      bootstrap("a",1,"p").should_not eq(bootstrap("a",2,"p"))
-      bootstrap("a",1,"p").should_not eq(bootstrap("b",1,"p"))
+      bootstrap("a", 1, "p").should eq(bootstrap("a", 1, "p"))
+      bootstrap("a", 1, "p").should_not eq(bootstrap("a", 1))
+      bootstrap("a", 1, "p").should_not eq(bootstrap("a", 2, "p"))
+      bootstrap("a", 1, "p").should_not eq(bootstrap("b", 1, "p"))
     end
   end
 
@@ -74,33 +74,33 @@ describe Redis::Cluster::Bootstrap do
 
     it "should accept uri with protocol" do
       # host, port
-      parse("redis://a@host:1").should eq(bootstrap("host"     , 1   , pass: "a"))
-      parse("redis://a@host:1").should eq(bootstrap("host"     , 1   , pass: "a"))
-      parse("redis://a@host"  ).should eq(bootstrap("host"     , 6379, pass: "a"))
-      parse("redis://a@:1"    ).should eq(bootstrap("127.0.0.1", 1   , pass: "a"))
-      parse("redis://host:1"  ).should eq(bootstrap("host"     , 1   , pass: nil))
-      parse("redis://host"    ).should eq(bootstrap("host"     , 6379, pass: nil))
-      parse("redis://a@"      ).should eq(bootstrap("127.0.0.1", 6379, pass: "a"))
-      parse("redis://:1"      ).should eq(bootstrap("127.0.0.1", 1   , pass: nil))
-      parse("redis://@:1"     ).should eq(bootstrap("127.0.0.1", 1   , pass: nil))
+      parse("redis://a@host:1").should eq(bootstrap("host", 1, pass: "a"))
+      parse("redis://a@host:1").should eq(bootstrap("host", 1, pass: "a"))
+      parse("redis://a@host").should eq(bootstrap("host", 6379, pass: "a"))
+      parse("redis://a@:1").should eq(bootstrap("127.0.0.1", 1, pass: "a"))
+      parse("redis://host:1").should eq(bootstrap("host", 1, pass: nil))
+      parse("redis://host").should eq(bootstrap("host", 6379, pass: nil))
+      parse("redis://a@").should eq(bootstrap("127.0.0.1", 6379, pass: "a"))
+      parse("redis://:1").should eq(bootstrap("127.0.0.1", 1, pass: nil))
+      parse("redis://@:1").should eq(bootstrap("127.0.0.1", 1, pass: nil))
       # sock
-      parse("redis:///tmp/s"  ).should eq(bootstrap(sock: "/tmp/s"))
+      parse("redis:///tmp/s").should eq(bootstrap(sock: "/tmp/s"))
       parse("redis://a@/tmp/s").should eq(bootstrap(sock: "/tmp/s", pass: "a"))
     end
 
     it "should accept uri without protocol" do
       # host, port
-      parse("a@host:1").should eq(bootstrap("host"     , 1   , pass: "a"))
-      parse("a@host:1").should eq(bootstrap("host"     , 1   , pass: "a"))
-      parse("a@host"  ).should eq(bootstrap("host"     , 6379, pass: "a"))
-      parse("a@:1"    ).should eq(bootstrap("127.0.0.1", 1   , pass: "a"))
-      parse("host:1"  ).should eq(bootstrap("host"     , 1   , pass: nil))
-      parse("host"    ).should eq(bootstrap("host"     , 6379, pass: nil))
-      parse("a@"      ).should eq(bootstrap("127.0.0.1", 6379, pass: "a"))
-      parse(":1"      ).should eq(bootstrap("127.0.0.1", 1   , pass: nil))
-      parse("@:1"     ).should eq(bootstrap("127.0.0.1", 1   , pass: nil))
+      parse("a@host:1").should eq(bootstrap("host", 1, pass: "a"))
+      parse("a@host:1").should eq(bootstrap("host", 1, pass: "a"))
+      parse("a@host").should eq(bootstrap("host", 6379, pass: "a"))
+      parse("a@:1").should eq(bootstrap("127.0.0.1", 1, pass: "a"))
+      parse("host:1").should eq(bootstrap("host", 1, pass: nil))
+      parse("host").should eq(bootstrap("host", 6379, pass: nil))
+      parse("a@").should eq(bootstrap("127.0.0.1", 6379, pass: "a"))
+      parse(":1").should eq(bootstrap("127.0.0.1", 1, pass: nil))
+      parse("@:1").should eq(bootstrap("127.0.0.1", 1, pass: nil))
       # sock
-      parse("/tmp/s"  ).should eq(bootstrap(sock: "/tmp/s"))
+      parse("/tmp/s").should eq(bootstrap(sock: "/tmp/s"))
       parse("a@/tmp/s").should eq(bootstrap(sock: "/tmp/s", pass: "a"))
     end
 
@@ -126,7 +126,7 @@ describe Redis::Cluster::Bootstrap do
   end
 
   describe "#copy" do
-    a = bootstrap("a",1,"/tmp/s","SECRET")
+    a = bootstrap("a", 1, "/tmp/s", "SECRET")
     it "update host" do
       b = a.copy(host: "b")
       a.host.should eq("a")
@@ -182,12 +182,12 @@ describe Redis::Cluster::Bootstrap do
 
   describe "#redis" do
     it "should create redis connection" do
-      b = Bootstrap.new(port: 6379)  # available in TravisCI
-      b.redis.close # should work
+      b = Bootstrap.new(port: 6379) # available in TravisCI
+      b.redis.close                 # should work
     end
 
     it "should raise Redis::CannotConnectError when redis is down" do
-      b = Bootstrap.new(port: 6380)  # when redis is down
+      b = Bootstrap.new(port: 6380) # when redis is down
       expect_raises(Redis::CannotConnectError, /127.0.0.1:6380/) do
         b.redis
       end

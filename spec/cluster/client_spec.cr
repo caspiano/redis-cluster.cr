@@ -2,6 +2,7 @@ require "./spec_helper"
 
 class InfoMockedClient < Redis::Cluster::Client
   property! mock_cluster_info : Redis::Cluster::ClusterInfo
+
   def load_info
     mock_cluster_info
   end

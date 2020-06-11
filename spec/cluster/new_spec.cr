@@ -3,7 +3,7 @@ require "./spec_helper"
 describe Redis::Cluster do
   describe ".new" do
     it "build instance from bootstrap" do
-      cluster = Redis::Cluster.new(Bootstrap.new)
+      Redis::Cluster.new(Bootstrap.new)
     end
 
     it "build instance from bootstrap string" do

@@ -5,11 +5,11 @@ class Redis
     def myid
       string_command(["CLUSTER", "MYID"])
     end
-    
+
     def nodes
       string_command(["CLUSTER", "NODES"])
     end
-    
+
     def addslots(slots : Array(Int32))
       string_command(["CLUSTER", "ADDSLOTS"] + slots.map(&.to_s))
     end

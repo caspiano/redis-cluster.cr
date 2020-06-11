@@ -49,7 +49,7 @@ describe Redis::Cluster::Slot do
 
       Redis::Cluster::Slot.slot("3{194").should eq(1305)
       Redis::Cluster::Slot.slot("x{3{194}y{a}").should eq(1305)
-      
+
       Redis::Cluster::Slot.slot("3{19").should eq(3602)
       Redis::Cluster::Slot.slot("x{3{19}4}y{a}").should eq(3602)
 

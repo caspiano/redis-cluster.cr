@@ -125,8 +125,8 @@ describe "Commands" do
         redis.del("myset")
         redis.sadd("myset", "foo", "bar", "foo2", "foo3")
         new_cursor, keys = redis.sscan("myset", 0, "foo*", 2)
-        new_cursor = new_cursor.as(String)
-        keys.is_a?(Array).should be_true
+        new_cursor.should be_a(String)
+        keys.should be_a(Array(Redis::RedisValue))
         array(keys).size.should be > 0
       end
 

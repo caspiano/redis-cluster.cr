@@ -17,7 +17,7 @@ module Redis::Cluster::Commands
   #   end
   macro proxy(name, *args)
     {% errno = (compare_versions(Crystal::VERSION, "0.34.0-0") > 0) ? "RuntimeError" : "Errno" %}
-    {% named_args = args.map{|a| a.is_a?(Assign) ? "#{a.target}: #{a.target}" : a.is_a?(TypeDeclaration) ? a.var : a}.join(", ").id %}
+    {% named_args = args.map { |a| a.is_a?(Assign) ? "#{a.target}: #{a.target}" : a.is_a?(TypeDeclaration) ? a.var : a }.join(", ").id %}
     {% invoke = "#{name}(#{named_args})".id %}
     def {{ name.id }}({{ args.join(", ").id }})
       redis(key.to_s).{{ invoke }}
@@ -37,7 +37,7 @@ module Redis::Cluster::Commands
   # treat the 1st arg as the key
   macro proxy_ary(name, *args)
     {% errno = (compare_versions(Crystal::VERSION, "0.34.0-0") > 0) ? "RuntimeError" : "Errno" %}
-    {% named_args = args.map{|a| a.is_a?(Assign) ? "#{a.target}: #{a.target}" : a}.join(", ").id %}
+    {% named_args = args.map { |a| a.is_a?(Assign) ? "#{a.target}: #{a.target}" : a }.join(", ").id %}
     {% invoke = "#{name}(#{named_args})".id %}
     def {{ name.id }}({{ args.join(",").id }})
       key = {{args.first}}.first { raise "{{name}}: key not found" }
@@ -84,7 +84,7 @@ module Redis::Cluster::Commands
   # Use first key to resolve node
   macro proxy_hash(name, *args)
     {% errno = (compare_versions(Crystal::VERSION, "0.34.0-0") > 0) ? "RuntimeError" : "Errno" %}
-    {% named_args = args.map{|a| a.is_a?(Assign) ? "#{a.target}: #{a.target}" : a}.join(", ").id %}
+    {% named_args = args.map { |a| a.is_a?(Assign) ? "#{a.target}: #{a.target}" : a }.join(", ").id %}
     {% invoke = "#{name}(#{named_args})".id %}
     def {{ name.id }}({{ args.join(",").id }})
       h = {{args.first}}        # h is a (Hash | NamedTuple)

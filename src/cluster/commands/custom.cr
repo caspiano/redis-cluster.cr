@@ -1,26 +1,27 @@
 module Redis::Cluster::Commands
-
+  # Keys
   ######################################################################
-  ### Keys
 
   def keys(pattern)
     array = [] of String
     nodes.each do |n|
       array += redis(n.addr).keys(pattern)
     end
-    return array
+
+    array
   end
 
   def randomkey
-    nodes.select(&.master?).each{|n|
+    nodes.select(&.master?).each { |n|
       key = redis(n.addr).randomkey
       return key if key
     }
-    return nil
+
+    nil
   end
 
+  # Connection
   ######################################################################
-  ### Connection
 
   # This is not clustered command. Just send to first node
   def ping
@@ -28,26 +29,26 @@ module Redis::Cluster::Commands
     redis("3B8").ping
   end
 
+  # Server
   ######################################################################
-  ### Server
 
   def flushall
-    nodes.select(&.master?).map{|n|
+    nodes.select(&.master?).map { |n|
       redis(n.addr).flushall
     }
   end
 
+  # Lists
   ######################################################################
-  ### Lists
 
+  # Sets
   ######################################################################
-  ### Sets
 
+  # Strings
   ######################################################################
-  ### Strings
 
+  # Aggregate
   ######################################################################
-  ### Aggregate
 
   # **Return value**: -1 when redis level error
   def counts : Counts
@@ -63,7 +64,7 @@ module Redis::Cluster::Commands
       begin
         info = InfoExtractor.new(redis(node.addr).info)
         keys = field.split(",").map(&.strip)
-        hash[node] = keys.map{|k| info.extract(k)}
+        hash[node] = keys.map { |k| info.extract(k) }
       rescue err
         hash[node] = [err.to_s.as(InfoExtractor::Value)]
       end

@@ -9,9 +9,9 @@ class Redis::Cluster::Client
   delegate nodes, to: cluster_info
 
   property bootstraps : Array(Bootstrap)
-  
+
   def initialize(@bootstraps : Array(Bootstrap))
-    @slot2addr  = Hash(Int32, Addr).new
+    @slot2addr = Hash(Int32, Addr).new
     @addr2redis = Hash(Addr, Redis).new
   end
 
@@ -24,7 +24,7 @@ class Redis::Cluster::Client
     if @cluster_info.nil?
       self.cluster_info = load_info
     end
-      
+
     @cluster_info.not_nil!
   end
 
@@ -35,9 +35,9 @@ class Redis::Cluster::Client
 
   def password
     if @bootstraps.empty?
-      return nil
+      nil
     else
-      return @bootstraps.first.pass
+      @bootstraps.first.pass
     end
   end
 
@@ -56,7 +56,7 @@ class Redis::Cluster::Client
   end
 
   private def ready!
-    cluster_info                # to initialize slots
+    cluster_info # to initialize slots
   end
 
   private def load_info

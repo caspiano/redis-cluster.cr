@@ -1,11 +1,10 @@
 module Redis::Cluster
   record Addr,
-    host  : String,
-    port  : Int32,
+    host : String,
+    port : Int32,
     cport : Int32 do
-
-    DEFAULT_HOST = "127.0.0.1"
-    DEFAULT_PORT = 6379
+    DEFAULT_HOST      = "127.0.0.1"
+    DEFAULT_PORT      =  6379
     CLUSTER_PORT_INCR = 10000
 
     delegate size, to: to_s
@@ -31,7 +30,7 @@ module Redis::Cluster
       end
 
       # sometimes Redis returns ":7001" for host part
-      host = "127.0.0.1" if host.to_s.empty? 
+      host = "127.0.0.1" if host.to_s.empty?
       port = port.to_i
       cport = cport ? cport.to_i : port + CLUSTER_PORT_INCR
 

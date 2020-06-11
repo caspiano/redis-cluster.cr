@@ -1,7 +1,6 @@
 require "./spec_helper"
 
 describe "redirection" do
-
   describe "MOVED" do
     it "should update slot mapping" do
       info = load_cluster_info("nodes/m1-6379.nodes")

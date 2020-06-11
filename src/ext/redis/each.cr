@@ -16,7 +16,7 @@ class Redis
     # redis.each(match: "foo:*") { |key| p key }
     # redis.each(count: 1000) { |key| p key }
     # ```
-    
+
     def each(match = "*", count = 1000)
       each_keys(match: match, count: count) do |keys|
         keys.each do |key|
@@ -42,7 +42,7 @@ class Redis
 
     def each_keys(match = "*", count = 1000)
       idx = 0
-      while true
+      loop do
         idx, keys = scan(idx, match, count)
         unless idx.is_a?(String)
           raise "scan failed due to invalid idx: expected String but got `#{idx.class}'"
@@ -51,9 +51,9 @@ class Redis
         unless keys.is_a?(Array)
           raise "scan failed due to invalid keys: expected Array but got `#{keys.class}'"
         end
-        yield keys.map(&.to_s)  # `Redis::RedisValue` to `String`
+        yield keys.map(&.to_s) # `Redis::RedisValue` to `String`
         break if idx == 0
-      end        
+      end
     end
   end
 end

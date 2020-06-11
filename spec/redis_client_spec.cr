@@ -66,10 +66,10 @@ describe Redis::Client do
   end
 
   ######################################################################
-  ### Testing with standard redis
+  # ## Testing with standard redis
 
   version = redis_version
-  cluster_support = (version.split(".",3).map(&.to_i) <=> [3,0,0]) == 1
+  cluster_support = (version.split(".", 3).map(&.to_i) <=> [3, 0, 0]) == 1
 
   unless cluster_support
     pending "Travis has old redis(#{version}), so it can't handle 'cluster' commands" do
@@ -77,68 +77,67 @@ describe Redis::Client do
   end
 
   if cluster_support
-  describe "#redis" do
-    it "returns a Redis instance" do
-      client = Redis::Client.new
-      client.redis.should be_a(Redis)
-      client.close
-    end
-  end
-
-  describe "#cluster?" do
-    it "returns false" do
-      client = Redis::Client.new
-      client.cluster?.should be_nil
-      client.close
-    end
-  end  
-
-  describe "#cluster" do
-    it "should raise" do
-      client = Redis::Client.new
-      expect_raises(Exception, "This instance has cluster support disabled: redis://127.0.0.1:6379") do
-        client.cluster
+    describe "#redis" do
+      it "returns a Redis instance" do
+        client = Redis::Client.new
+        client.redis.should be_a(Redis)
+        client.close
       end
-      client.close
     end
-  end  
 
-  describe "#standard?" do
-    it "returns true" do
-      client = Redis::Client.new
-      client.standard?.should be_a(Redis)
-      client.close
-    end
-  end  
-
-  describe "#standard" do
-    it "returns redis instance" do
-      client = Redis::Client.new
-      client.standard.should be_a(Redis)
-      client.close
-    end
-  end
-
-  ######################################################################
-  ### Hybrid API
-
-  describe "#pipelined" do
-    it "works (compile)" do
-      client = Redis::Client.new
-      client.pipelined("foo") do
+    describe "#cluster?" do
+      it "returns false" do
+        client = Redis::Client.new
+        client.cluster?.should be_nil
+        client.close
       end
-      client.close
     end
-  end
 
-  describe "#multi" do
-    it "works (compile)" do
-      client = Redis::Client.new
-      client.multi("foo") do
+    describe "#cluster" do
+      it "should raise" do
+        client = Redis::Client.new
+        expect_raises(Exception, "This instance has cluster support disabled: redis://127.0.0.1:6379") do
+          client.cluster
+        end
+        client.close
       end
-      client.close
     end
-  end
 
+    describe "#standard?" do
+      it "returns true" do
+        client = Redis::Client.new
+        client.standard?.should be_a(Redis)
+        client.close
+      end
+    end
+
+    describe "#standard" do
+      it "returns redis instance" do
+        client = Redis::Client.new
+        client.standard.should be_a(Redis)
+        client.close
+      end
+    end
+
+    ######################################################################
+    # ## Hybrid API
+
+    describe "#pipelined" do
+      it "works (compile)" do
+        client = Redis::Client.new
+        client.pipelined("foo") do
+        end
+        client.close
+      end
+    end
+
+    describe "#multi" do
+      it "works (compile)" do
+        client = Redis::Client.new
+        client.multi("foo") do
+        end
+        client.close
+      end
+    end
   end # end if cluster_support
 end

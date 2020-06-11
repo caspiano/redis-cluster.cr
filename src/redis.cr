@@ -35,11 +35,11 @@ class ::Redis::Client
       nil
     end
   end
-  
+
   def cluster : ::Redis::Cluster::Client
     cluster? || raise "This instance has cluster support disabled: #{bootstrap}"
   end
-  
+
   def standard? : ::Redis?
     if redis.is_a?(::Redis)
       redis.as(::Redis)
@@ -47,13 +47,13 @@ class ::Redis::Client
       nil
     end
   end
-  
+
   def standard : ::Redis
     standard? || raise "This instance is running on cluster: #{bootstrap}"
   end
 
+  # Connection
   ######################################################################
-  ### Connection
 
   def connect!
     @redis ||= establish_connection!
@@ -63,7 +63,7 @@ class ::Redis::Client
     @redis.try(&.close) rescue nil
     @redis = nil
   end
-  
+
   # Return a Cluster Connection or Standard Connection
   private def establish_connection!
     redis = bootstrap.redis
@@ -79,20 +79,20 @@ class ::Redis::Client
       end
     end
 
-    return ::Redis::Cluster.new(bootstrap)
+    ::Redis::Cluster.new(bootstrap)
   end
 
+  # Hybrid feature
   ######################################################################
-  ### Hybrid feature
 
   def redis_for(key : String)
     cluster? ? cluster.redis(key) : standard
   end
 
+  # Reconnected feature
   ######################################################################
-  ### Reconnected feature
 
-  {% for method in %w( pipelined multi ) %}
+  {% for method in %w(pipelined multi) %}
     {% errno = (compare_versions(Crystal::VERSION, "0.34.0-0") > 0) ? "RuntimeError" : "Errno" %}
 
     def {{method.id}}(key, reconnect : Bool = false)

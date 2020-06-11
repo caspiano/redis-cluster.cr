@@ -13,7 +13,8 @@ note_for = ->(key : String) {
   note.scan(/^#{key}\t(.*?)$/m) do
     return $1
   end
-  return nil
+
+  nil
 }
 
 flush = ->(g : String?) {
@@ -28,7 +29,7 @@ flush = ->(g : String?) {
 
   max = items.map(&.size).max + 2
   all = count.call(g)
-  ok  = items.count{|i| impl.includes?(i)}
+  ok = items.count { |i| impl.includes?(i) }
   cat = g.split("_").map(&.capitalize).join(" ")
   puts "### #{cat} (#{ok} / #{all})"
   puts ""
@@ -38,23 +39,23 @@ flush = ->(g : String?) {
   items.each do |key|
     name = "%-#{max}s" % "`#{key}`"
     implemented = impl.includes?(key) ? "  ✓ " : "    "
-    tested      = test.includes?(key) ? "  ✓ " : "    "
-    noted       = note_for.call(key) || "    "
+    tested = test.includes?(key) ? "  ✓ " : "    "
+    noted = note_for.call(key) || "    "
     puts "|#{name}|#{implemented}|#{tested}|#{noted}|"
   end
   puts ""
   items.clear
 }
 
-### Main
+# Main
 
 puts "# Supported API"
 
-impl_cnt = (list.map(&.split(/\t/,2).last).flatten.to_set & impl.to_set).size
+impl_cnt = (list.map(&.split(/\t/, 2).last).flatten.to_set & impl.to_set).size
 puts "## Implemented %d%% (%d/%d)" % [(impl_cnt*100/list.size), impl_cnt, list.size]
 
 list.each do |line|
-  g, n = line.chomp.split(/\t/,2)
+  g, n = line.chomp.split(/\t/, 2)
   flush.call(group) if group != g
   group = g
   items << n

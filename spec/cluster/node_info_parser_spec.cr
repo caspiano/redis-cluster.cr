@@ -67,7 +67,7 @@ describe Redis::Cluster::NodeInfo do
 
     it "should raise when port part is missing" do
       expect_raises(Exception, /port/) do
-        node = Redis::Cluster::NodeInfo.parse <<-EOF
+        Redis::Cluster::NodeInfo.parse <<-EOF
           5ac5361 127.0.0.1: myself,master - 0 0 0 connected 0-9999
         EOF
       end
@@ -75,7 +75,7 @@ describe Redis::Cluster::NodeInfo do
 
     it "should raise when port part is not a number format" do
       expect_raises(Exception, /port/) do
-        node = Redis::Cluster::NodeInfo.parse <<-EOF
+        Redis::Cluster::NodeInfo.parse <<-EOF
           5ac5361 127.0.0.1:abc myself,master - 0 0 0 connected 0-9999
         EOF
       end

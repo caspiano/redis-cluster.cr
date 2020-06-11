@@ -26,9 +26,9 @@ describe Redis::Cluster::NodeInfo do
       nodes.map(&.sent).should eq([0, 0, 0, 1466096807257, 0, 0, 0, 0, 0])
       nodes.map(&.recv).should eq([1466130784976, 0, 1466124472808, 1466096806037, 1466124473832, 1466124474856, 1466124474343, 1466124473320, 1466124473320])
       nodes.map(&.slot.to_s).should eq(["", "5461-10922", "10923-16383", "", "", "", "0-5460", "", ""])
-#      nodes.map(&.to_s).should eq(["2afb4d 127.0.0.1:7001 master",
-#                                   "7f193d 127.0.0.1:7002 master",
-#                                   "053dd7 127.0.0.1:7003 master"])
+      #      nodes.map(&.to_s).should eq(["2afb4d 127.0.0.1:7001 master",
+      #                                   "7f193d 127.0.0.1:7002 master",
+      #                                   "053dd7 127.0.0.1:7003 master"])
 
       nodes.select(&.fail?).map(&.addr.to_s).should eq(["127.0.0.1:7004"])
       nodes.select(&.disconnected?).map(&.addr.to_s).should eq(["127.0.0.1:7004"])

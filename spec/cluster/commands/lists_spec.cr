@@ -71,7 +71,7 @@ describe "Commands" do
       redis.rpush("mylist", "world")
       redis.lindex("mylist", 0).should eq("hello")
       redis.lindex("mylist", 1).should eq("world")
-      redis.lindex("mylist", 2).should eq(nil)
+      redis.lindex("mylist", 2).should eq("")
     end
 
     it "#lpop" do

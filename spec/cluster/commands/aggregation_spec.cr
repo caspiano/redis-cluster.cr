@@ -1,9 +1,9 @@
 require "./spec_helper"
 
 describe Redis::Cluster::Commands do
+  # Aggregations
   ######################################################################
-  ### Aggregations
-  
+
   describe "#counts" do
     it "connect to redis" do
       redis.counts.size.should eq(1)

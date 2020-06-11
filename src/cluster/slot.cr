@@ -1,13 +1,13 @@
 module Redis::Cluster
   class Slot
-    FIRST = 0
+    FIRST =     0
     LAST  = 16383
     RANGE = (FIRST..LAST)
     SIZE  = RANGE.size
-    MASK  = 0x3FFF              # fast modulo for 16384
+    MASK  = 0x3FFF # fast modulo for 16384
 
     DELIMITER = /[,\s]+/
-    
+
     def self.zero
       Slot.new("", Set(Int32).new)
     end
@@ -21,24 +21,24 @@ module Redis::Cluster
       str = str.strip
       case str
       when ""
-        return Slot.zero
+        Slot.zero
       when DELIMITER
-        slots = str.split(DELIMITER).map{|s| parse(s.strip)}
-        return slots.reduce(Slot.zero) {|a,s| a + s}
+        slots = str.split(DELIMITER).map { |s| parse(s.strip) }
+        slots.reduce(Slot.zero) { |a, s| a + s }
       when /\A(\d+)\Z/
-        return Slot.new("#{$1}", Set{$1.to_i})
+        Slot.new("#{$1}", Set{$1.to_i})
       when /\A(\d+)(\.\.|-)(\d+)\Z/
-        return Slot.new("#{$1}-#{$3}", ($1.to_i .. $3.to_i).to_set)
+        Slot.new("#{$1}-#{$3}", ($1.to_i..$3.to_i).to_set)
       when /\A(\.\.|-)(\d+)\Z/
-        return Slot.new("#{FIRST}-#{$2}", (FIRST .. $2.to_i).to_set)
+        Slot.new("#{FIRST}-#{$2}", (FIRST..$2.to_i).to_set)
       when /\A(\d+)(\.\.|-)\Z/
-        return Slot.new("#{$1}-#{LAST}", ($1.to_i .. LAST).to_set)
-      when /\A\[(\d+)->-([0-9a-f]+)\]\Z/  # MIGRATING
+        Slot.new("#{$1}-#{LAST}", ($1.to_i..LAST).to_set)
+      when /\A\[(\d+)->-([0-9a-f]+)\]\Z/ # MIGRATING
         # [3194->-5242463801bf74ea30caca8cd01b56b49fb9c06c]
-        return Slot.new("#{$1}>", ($1.to_i .. $1.to_i).to_set, {$1.to_i => "M"})
-      when /\A\[(\d+)-<-([0-9a-f]+)\]\Z/  # IMPORTING
+        Slot.new("#{$1}>", ($1.to_i..$1.to_i).to_set, {$1.to_i => "M"})
+      when /\A\[(\d+)-<-([0-9a-f]+)\]\Z/ # IMPORTING
         # [3194-<-5242463801bf74ea30caca8cd01b56b49fb9c06c]
-        return Slot.new("#{$1}<", ($1.to_i .. $1.to_i).to_set, {$1.to_i => "I"})
+        Slot.new("#{$1}<", ($1.to_i..$1.to_i).to_set, {$1.to_i => "I"})
       else
         raise "unsupported slot format: `#{str}`"
       end

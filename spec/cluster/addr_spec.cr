@@ -7,13 +7,13 @@ end
 describe Redis::Cluster::Addr do
   describe "equality" do
     it "should test by value" do
-      addr("a",1).should eq(addr("a",1))
-      addr("a",1).should_not eq(addr("a",2))
-      addr("a",1).should_not eq(addr("b",1))
+      addr("a", 1).should eq(addr("a", 1))
+      addr("a", 1).should_not eq(addr("a", 2))
+      addr("a", 1).should_not eq(addr("b", 1))
     end
 
     it "should index from Array" do
-      [addr("a",1),addr("a",2)].index(addr("a",1)).should eq(0)
+      [addr("a", 1), addr("a", 2)].index(addr("a", 1)).should eq(0)
     end
   end
 
@@ -31,13 +31,13 @@ describe Redis::Cluster::Addr do
 
     it "should raise when port part is missing" do
       expect_raises(Exception, /port/) do
-        addr = Redis::Cluster::Addr.parse("127.0.0.1:")
+        Redis::Cluster::Addr.parse("127.0.0.1:")
       end
     end
 
     it "should raise when port part is not a number format" do
       expect_raises(Exception, /port/) do
-        addr = Redis::Cluster::Addr.parse("127.0.0.1:abc")
+        Redis::Cluster::Addr.parse("127.0.0.1:abc")
       end
     end
 

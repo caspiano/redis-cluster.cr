@@ -6,7 +6,7 @@ module Redis::Cluster
 
   # [backward compats]
   def self.new(bootstrap : String, password : String? = nil) : Client
-    bootstraps = bootstrap.split(",").map{|b| Bootstrap.parse(b.strip).copy(pass: password)}
+    bootstraps = bootstrap.split(",").map { |b| Bootstrap.parse(b.strip).copy(pass: password) }
     Client.new(bootstraps)
   end
 
@@ -25,6 +25,6 @@ module Redis::Cluster
       end
     end
 
-    return ::Redis::Cluster.new("#{host}:#{port}", password: password)
+    ::Redis::Cluster.new("#{host}:#{port}", password: password)
   end
 end

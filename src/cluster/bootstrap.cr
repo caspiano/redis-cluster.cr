@@ -3,23 +3,22 @@ require "uri"
 module Redis::Cluster
   record Bootstrap,
     host : String? = nil,
-    port : Int32?  = nil,
+    port : Int32? = nil,
     sock : String? = nil,
     pass : String? = nil do
-
     def host
       if @host && @host =~ /:/
         raise "invalid hostname: #{@host}"
       end
       @host || "127.0.0.1"
     end
-         
+
     def port
       @port || 6379
     end
-         
+
     def sock?
-      !! @sock
+      !!@sock
     end
 
     def pass? : String?
@@ -28,12 +27,20 @@ module Redis::Cluster
     end
 
     # aliases
-    def pass       ; pass? ; end
-    def password   ; pass  ; end
-    def unixsocket ; sock  ; end
-         
+    def pass
+      pass?
+    end
+
+    def password
+      pass
+    end
+
+    def unixsocket
+      sock
+    end
+
     def copy(host : String? = nil, port : Int32? = nil, sock : String? = nil, pass : String? = nil)
-      Bootstrap.new(host: host||@host, port: port||@port, sock: sock||@sock, pass: pass||pass?)
+      Bootstrap.new(host: host || @host, port: port || @port, sock: sock || @sock, pass: pass || pass?)
     end
 
     def redis
@@ -61,7 +68,7 @@ module Redis::Cluster
     def to_s(io : IO)
       io << to_s
     end
-    
+
     def self.zero
       new(host: Addr::DEFAULT_HOST, port: Addr::DEFAULT_PORT, pass: nil)
     end
@@ -75,7 +82,7 @@ module Redis::Cluster
       else
         s = "redis://#{s}"
       end
-        
+
       uri = URI.parse(s)
       # `URI.parse("redis:///")` now builds `host` as `""` rather than `nil` (#6323 in crystal-0.29)
       host = uri.host.to_s.empty? ? nil : uri.host.to_s
@@ -85,9 +92,11 @@ module Redis::Cluster
       if path && host.nil? && uri.port.nil?
         return new(sock: path, pass: pass)
       end
+
       if uri.port && uri.port.not_nil! <= 0
         raise "invalid port for Bootstrap: `#{uri.port}`"
       end
+
       zero.copy(host: host, port: uri.port, pass: pass)
     end
   end

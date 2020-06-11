@@ -35,9 +35,9 @@ end
 def array2hash(args : Array(String))
   hash = Hash(String, String).new
   args.each_with_index do |v, i|
-    hash[args[i-1].not_nil!] = v if i.odd?
+    hash[args[i - 1].not_nil!] = v if i.odd?
   end
-  return hash
+  hash
 end
 
 module TestRedisPool
@@ -45,7 +45,7 @@ module TestRedisPool
 end
 
 protected def new_redis_cluster(info : Redis::Cluster::ClusterInfo)
-  bootstraps = info.nodes.map{|n| Redis::Cluster::Bootstrap.parse(n.addr.to_s)}
+  bootstraps = info.nodes.map { |n| Redis::Cluster::Bootstrap.parse(n.addr.to_s) }
   Redis::Cluster::Client.new(bootstraps).tap(&.cluster_info = info)
 end
 
@@ -61,10 +61,10 @@ end
 
 protected def redis_version : String
   redis = Redis.new
-  return redis.info("server")["redis_version"]
+  redis.info("server")["redis_version"]
 rescue err
   STDERR.puts "checking redis_version failed: #{err}"
-  return "0.0.0"
+  "0.0.0"
 ensure
   redis.try(&.close)
 end

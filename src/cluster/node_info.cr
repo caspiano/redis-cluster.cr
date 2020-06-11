@@ -1,23 +1,35 @@
 record Redis::Cluster::NodeInfo,
-  sha1   : String,
-  addr   : Addr,
-  flags  : String,
+  sha1 : String,
+  addr : Addr,
+  flags : String,
   master : String,
-  sent   : Int64,
-  recv   : Int64,
-  epoch  : Int64,
+  sent : Int64,
+  recv : Int64,
+  epoch : Int64,
   status : String,
-  slot   : Slot do
-
+  slot : Slot do
   def_equals_and_hash sha1
   delegate host, port, cport, to: addr
 
-  def master?; flags["master"]?  ; end
-  def slave? ; !! flags["slave"]?; end
-  def fail?  ; !! flags["fail"]? ; end
+  def master?
+    flags["master"]?
+  end
 
-  def connected?   ; status.split(",").includes?("connected"); end
-  def disconnected?; !! status["disconnected"]?              ; end
+  def slave?
+    !!flags["slave"]?
+  end
+
+  def fail?
+    !!flags["fail"]?
+  end
+
+  def connected?
+    status.split(",").includes?("connected")
+  end
+
+  def disconnected?
+    !!status["disconnected"]?
+  end
 
   def sha1_6
     "#{sha1}??????"[0..5]
@@ -30,7 +42,7 @@ record Redis::Cluster::NodeInfo,
   def role
     flags.sub(/myself,/, "")
   end
-  
+
   def slot?
     !slot.empty?
   end
@@ -44,7 +56,7 @@ record Redis::Cluster::NodeInfo,
   end
 
   def has_master?
-    ! master.empty?
+    !master.empty?
   end
 
   def first_slot : Int32
@@ -52,7 +64,7 @@ record Redis::Cluster::NodeInfo,
       raise "[BUG] #{addr} has no slot_range"
     }
   end
-  
+
   def to_s(io : IO)
     io << "[%s] (%s) %6s" % [sha1_6, addr, role]
   end

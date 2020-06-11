@@ -10,11 +10,11 @@ module Redis::Cluster
     record Search,
       field : String,
       label : String?
-      
+
     record Common,
       prefix : String,
       length : Int32
-      
+
     record NotFound,
       search : Search do
       def to_s(io : IO)
@@ -28,14 +28,14 @@ module Redis::Cluster
     private def preprocess_field(field : String)
       case field
       when "v", /\Aver/
-        return "redis_version{ver}"
+        "redis_version{ver}"
       when "d", /\Aday/
-        return "uptime_in_days{days}"
+        "uptime_in_days{days}"
       else
-        return field
+        field
       end
     end
-    
+
     def extract(field : String)
       field = preprocess_field(field)
 
@@ -57,28 +57,28 @@ module Redis::Cluster
         return extract_memory(Search.new(field: "memory", label: "mem"))
       else
       end
-      
+
       # search prefixed
-      candidates = @hash.keys.select{|k| k.starts_with?(search.field)}
+      candidates = @hash.keys.select { |k| k.starts_with?(search.field) }
       case candidates.size
-      when 0 
+      when 0
         # no matched
-        return NotFound.new(search)
+        NotFound.new(search)
       else
         # multiple matched
         common = find_common_prefix_size(candidates)
 
         # special case: ["", "_a", "_b"] should be "foo(val, a:..., b:)"
-        lcsv = candidates.map{|key|
+        lcsv = candidates.map { |key|
           k = "#{key[common.length..-1]}".sub(/\A_/, "")
           v = "#{@hash[key]}"
           k.empty? ? v : "#{k}:#{v}"
         }.join(", ")
 
         if search.label.nil? && common.prefix.empty?
-          return lcsv
+          lcsv
         else
-          return "%s(%s)" % [search.label || common.prefix, lcsv]
+          "#{search.label || common.prefix}(#{lcsv})"
         end
       end
     end
@@ -89,31 +89,32 @@ module Redis::Cluster
     # [output]
     #   sha1:00000000, dirty:0
     private def find_common_prefix_size(candidates)
-      parts = candidates.map{|s| s.split("_")}
-      found = ->(i : Int32){ parts[0][0..i].join("_").size }
+      parts = candidates.map { |s| s.split("_") }
+      found = ->(i : Int32) { parts[0][0..i].join("_").size }
       lasti = parts.map(&.size).min
       # [["redis", "git", "sha1"],
       #  ["redis", "git", "dirty"]]
-      (0 ...lasti).each do |pi|
+      (0...lasti).each do |pi|
         v = parts[0][pi]
         parts.each do |ary|
           if ary[pi] != v
             return Common.new("", 0) if pi == 0
-            return Common.new(parts[0][0..pi-1].join("_"), found.call(pi-1))
+            return Common.new(parts[0][0..pi - 1].join("_"), found.call(pi - 1))
           end
         end
       end
-      return Common.new(parts[0][0..lasti].join("_"), found.call(lasti))
+
+      Common.new(parts[0][0..lasti].join("_"), found.call(lasti))
     end
 
     private def extract_memory(search)
-      cur = @hash.fetch("used_memory_human"){ "?" }
-      max = @hash.fetch("maxmemory_human") { "?" }
+      cur = @hash.fetch("used_memory_human") { "?" }
+      # max = @hash.fetch("maxmemory_human") { "?" }
 
       pct = "%d" % (@hash["used_memory"].to_i64 * 100 / @hash["maxmemory"].to_i64) rescue "?"
-      pol = @hash["maxmemory_policy"].sub("volatile","v").sub("allkeys","a").sub("noeviction","noev").sub("random","rnd") rescue "?"
-        
-      return "mem(#{cur};#{pol};#{pct}%)"
+      pol = @hash["maxmemory_policy"].sub("volatile", "v").sub("allkeys", "a").sub("noeviction", "noev").sub("random", "rnd") rescue "?"
+
+      "mem(#{cur};#{pol};#{pct}%)"
     end
 
     {% begin %}
@@ -126,9 +127,9 @@ module Redis::Cluster
             else
               0.to_i64
             end
-      return "cnt(#{cnt})"
+      "cnt(#{cnt})"
     rescue err : {{ errno.id }}
-      return NotFound.new(search)
+      NotFound.new(search)
     end
     {% end %}
   end

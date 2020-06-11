@@ -40,7 +40,7 @@ module Redis::Cluster::Commands
   proxy_ary brpop, keys, timeout_in_seconds
   proxy rpoplpush, key, destination
   proxy brpoplpush, key, destination, timeout_in_seconds = nil
-  
+
   # Strings
   proxy get, key
   proxy set, key, value, ex = nil, px = nil, nx = nil, xx = nil
@@ -63,7 +63,7 @@ module Redis::Cluster::Commands
   proxy getbit, key, index
   proxy setbit, key, index, value
   proxy bitpos, key, bit, start = nil, to = nil
-  
+
   # Sets
   proxy setex, key, expire_in_seconds, value
   proxy setnx, key, value
@@ -76,7 +76,7 @@ module Redis::Cluster::Commands
   proxy sismember, key, value
   proxy srem, key, *values
   proxy scard, key
-  proxy sdiff, key, *keys 
+  proxy sdiff, key, *keys
   proxy sdiffstore, key, *keys
   proxy sinter, key, *keys
   proxy sinterstore, key, *keys

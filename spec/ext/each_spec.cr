@@ -4,8 +4,8 @@ describe "Redis(ext)" do
   it "(setup)" do
     redis = Redis.new
     redis.flushall
-    6.times{|i| redis.set(i.to_i, i.to_i)}
-    3.times{|i| redis.sadd("set", i.to_i)}
+    6.times { |i| redis.set(i.to_i, i.to_i) }
+    3.times { |i| redis.sadd("set", i.to_i) }
     redis.close
   end
 

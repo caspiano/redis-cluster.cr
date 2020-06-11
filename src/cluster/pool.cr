@@ -1,10 +1,10 @@
 module Redis::Cluster::Pool
-  include Enumerable(Redis)     # for all redis connections
+  include Enumerable(Redis) # for all redis connections
 
   def new_redis(host : String, port : Int32)
     Redis.new(host: host, port: port, password: password)
   end
-  
+
   def redis(key : String) : Redis
     redis(addr(key))
   end
@@ -18,9 +18,9 @@ module Redis::Cluster::Pool
       yield redis(n)
     end
   end
-  
+
   def cover_slot?(slot)
-    !! @slot2addr[slot]?
+    !!@slot2addr[slot]?
   end
 
   def close
@@ -40,7 +40,7 @@ module Redis::Cluster::Pool
   def addr(key : String) : Addr
     ready!
     slot = Slot.slot(key)
-    return @slot2addr.fetch(slot) {
+    @slot2addr.fetch(slot) {
       on_slot_not_served(slot, key)
     }
   end
@@ -56,7 +56,7 @@ module Redis::Cluster::Pool
 
   def on_slot_not_served(slot : Int32, key : String) : Addr
     reset!
-    return @slot2addr.fetch(slot) {
+    @slot2addr.fetch(slot) {
       msg = "This cluster doesn't cover slot=#{slot} (key=#{key.inspect})"
       raise Redis::Error::SlotNotServed.new(slot, msg)
     }
