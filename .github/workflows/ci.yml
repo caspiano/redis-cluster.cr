@@ -18,12 +18,11 @@ jobs:
       - run: sudo sed -e 's/^bind.*/bind 127.0.0.1/' /etc/redis/redis.conf > redis.conf
       - run: sudo mv redis.conf /etc/redis
       - run: sudo service redis-server start
-      - run: echo PING | nc localhost 6379
       - uses: oprypin/install-crystal@v1
         with:
           crystal: ${{matrix.crystal}}
       - uses: actions/checkout@v2
       - run: shards install --ignore-crystal-version
-      - run: crystal spec
       - run: crystal tool format --check
+      - run: make test
 
