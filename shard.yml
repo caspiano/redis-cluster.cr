@@ -1,16 +1,14 @@
 name: redis-cluster
 version: 0.8.4
-
-dependencies:
-  redis:
-    github: maiha/crystal-redis
-    version: ">= 2.6.0"
-  crc16:
-    github: maiha/crc16.cr
-    version: ">= 0.1.0"
-
+license: MIT
 authors:
   - maiha <maiha@wota.jp>
   - Caspian Baska <caspian@place.tech>
 
-license: MIT
+dependencies:
+  redis:
+    github: stefanwille/crystal-redis
+    version: ~> 2.7
+  crc16:
+    github: maiha/crc16.cr
+    version: ">= 0.1.0"
