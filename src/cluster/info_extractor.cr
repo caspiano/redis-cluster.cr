@@ -59,21 +59,20 @@ module Redis::Cluster
       end
 
       # search prefixed
-      candidates = @hash.keys.select { |k| k.starts_with?(search.field) }
-      case candidates.size
-      when 0
-        # no matched
+      candidates = @hash.keys.select &.starts_with?(search.field)
+      if candidates.size.zero?
+        # None matched
         NotFound.new(search)
       else
-        # multiple matched
+        # Multiple matched
         common = find_common_prefix_size(candidates)
 
         # special case: ["", "_a", "_b"] should be "foo(val, a:..., b:)"
-        lcsv = candidates.map { |key|
+        lcsv = candidates.join(", ") do |key|
           k = "#{key[common.length..-1]}".sub(/\A_/, "")
           v = "#{@hash[key]}"
           k.empty? ? v : "#{k}:#{v}"
-        }.join(", ")
+        end
 
         if search.label.nil? && common.prefix.empty?
           lcsv
@@ -89,8 +88,7 @@ module Redis::Cluster
     # [output]
     #   sha1:00000000, dirty:0
     private def find_common_prefix_size(candidates)
-      parts = candidates.map { |s| s.split("_") }
-      found = ->(i : Int32) { parts[0][0..i].join("_").size }
+      parts = candidates.map &.split('_')
       lasti = parts.map(&.size).min
       # [["redis", "git", "sha1"],
       #  ["redis", "git", "dirty"]]
@@ -99,12 +97,16 @@ module Redis::Cluster
         parts.each do |ary|
           if ary[pi] != v
             return Common.new("", 0) if pi == 0
-            return Common.new(parts[0][0..pi - 1].join("_"), found.call(pi - 1))
+            return Common.new(parts[0][0..pi - 1].join('_'), prefix_size(parts, pi - 1))
           end
         end
       end
 
-      Common.new(parts[0][0..lasti].join("_"), found.call(lasti))
+      Common.new(parts[0][0..lasti].join("_"), prefix_size(parts, lasti))
+    end
+
+    private def prefix_size(parts, index)
+      parts[0][0..index].join('_').size
     end
 
     private def extract_memory(search)

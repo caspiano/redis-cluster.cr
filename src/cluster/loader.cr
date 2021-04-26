@@ -13,9 +13,7 @@ module Redis::Cluster
         redis.try(&.close)
       end
     end
-    if errors.any?
-      raise errors.first.not_nil!
-    end
+    raise errors.first unless errors.empty?
     raise "Redis not found: #{bootstraps.map(&.to_s).inspect}"
   end
 end

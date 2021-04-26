@@ -84,10 +84,11 @@ module Redis::Cluster
       end
 
       uri = URI.parse(s)
+
       # `URI.parse("redis:///")` now builds `host` as `""` rather than `nil` (#6323 in crystal-0.29)
-      host = uri.host.to_s.empty? ? nil : uri.host.to_s
-      pass = uri.user.to_s.empty? ? nil : uri.user
-      path = uri.path.to_s.empty? ? nil : uri.path.to_s
+      host = uri.host.to_s.presence
+      pass = uri.user.to_s.presence
+      path = uri.path.to_s.presence
 
       if path && host.nil? && uri.port.nil?
         return new(sock: path, pass: pass)

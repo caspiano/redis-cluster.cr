@@ -9,11 +9,7 @@ protected def sort(a)
     raise "Cannot sort this: #{a.class}"
   end
 
-  convert_to_string_array(a).sort
-end
-
-protected def convert_to_string_array(a)
-  a.map { |item| item.to_s }
+  a.map(&.to_s).sort!
 end
 
 # Same as `sort` except sorting feature

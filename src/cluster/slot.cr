@@ -52,12 +52,16 @@ module Redis::Cluster
 
     # special states: MIGRATING or IMPORTING
     def special?
-      flags.any?
+      !flags.empty?
     end
 
     # same as name except special slots
     def signature
-      @label.split(DELIMITER).select(/\A\d+($|-)/).sort_by(&.scan(/^(\d+)/).map(&.[0]).join.to_i).join(",")
+      @label
+        .split(DELIMITER)
+        .select!(/\A\d+($|-)/)
+        .sort_by!(&.scan(/^(\d+)/).join(&.[0]).to_i)
+        .join(",")
     end
 
     def slots

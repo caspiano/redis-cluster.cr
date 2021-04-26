@@ -124,7 +124,7 @@ describe Redis::Cluster::ClusterInfo do
 
     it "should ignore vars or unknown entry" do
       info = Redis::Cluster::ClusterInfo.parse(nodes)
-      info.nodes.map(&.addr.port).sort.should eq([7001, 7002, 7003])
+      info.nodes.map(&.addr.port).sort!.should eq([7001, 7002, 7003])
     end
 
     it "should raise when strict mode" do
