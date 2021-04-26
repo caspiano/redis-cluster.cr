@@ -29,8 +29,8 @@ flush = ->(g : String?) {
 
   max = items.map(&.size).max + 2
   all = count.call(g)
-  ok = items.count { |i| impl.includes?(i) }
-  cat = g.split("_").map(&.capitalize).join(" ")
+  ok = items.count &.in?(impl)
+  cat = g.split("_").join(' ', &.capitalize)
   puts "### #{cat} (#{ok} / #{all})"
   puts ""
   puts "|%-#{max}s|impl|test|note|" % "Command"
@@ -51,7 +51,7 @@ flush = ->(g : String?) {
 
 puts "# Supported API"
 
-impl_cnt = (list.map(&.split(/\t/, 2).last).flatten.to_set & impl.to_set).size
+impl_cnt = (list.flat_map(&.split(/\t/, 2).last) & impl).size
 puts "## Implemented %d%% (%d/%d)" % [(impl_cnt*100/list.size), impl_cnt, list.size]
 
 list.each do |line|

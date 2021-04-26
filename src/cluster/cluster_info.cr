@@ -38,7 +38,7 @@ class Redis::Cluster::ClusterInfo
   end
 
   def serving_masters : Array(NodeInfo)
-    nodes.select(&.serving?).sort_by(&.first_slot)
+    nodes.select(&.serving?).sort_by!(&.first_slot)
   end
 
   def orphaned_masters(counts : Hash(NodeInfo, Int64))
@@ -58,11 +58,8 @@ class Redis::Cluster::ClusterInfo
 
   # TODO: better algorithm
   def minimum_master_or_nil(counts)
-    oms = orphaned_masters(counts)
-
-    if oms.any?
-      return oms[0]
-    end
+    minimum_master = orphaned_masters(counts).first?
+    return minimum_master unless minimum_master.nil?
 
     c = 1000
     found = nil
@@ -177,31 +174,32 @@ class Redis::Cluster::ClusterInfo
       host = addr
     end
 
-    found = nodes.select { |n|
-      (n.host.starts_with?(host)) && (port.nil? || n.port == port)
-    }
+    found = nodes.select do |n|
+      n.host.starts_with?(host) && (port.nil? || n.port == port)
+    end
+
     case found.size
     when 0
-      possible = nodes.map(&.addr).join(", ")
+      possible = nodes.join(", ", &.addr)
       raise NodeNotFound.new("node not found: `#{addr}`\n(possible: #{possible})")
     when 1
       found.first.not_nil!
     else
-      possible = nodes.map(&.addr).join(", ")
+      possible = nodes.join(", ", &.addr)
       raise NodeNotUniq.new("node not uniq: `#{addr}`\n(possible: #{possible})")
     end
   end
 
   def find_node_by_sha1!(sha1)
-    found = nodes.select { |n| n.sha1 =~ /\A#{sha1}/ }
+    found = nodes.select &.sha1.=~(/\A#{sha1}/)
     case found.size
     when 0
-      possible = nodes.map(&.sha1_6).join(", ")
+      possible = nodes.join(", ", &.sha1_6)
       raise NodeNotFound.new("node not found: `#{sha1}`\n(possible: #{possible})")
     when 1
-      found.first.not_nil!
+      found.first
     else
-      possible = found.map(&.sha1_6).join(", ")
+      possible = nodes.join(", ", &.sha1_6)
       raise NodeNotUniq.new("node not uniq: `#{sha1}`\n(possible: #{possible})")
     end
   end
