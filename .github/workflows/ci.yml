@@ -1,28 +1,39 @@
 name: CI
-on: [push, pull_request, workflow_dispatch]
+on: push
 jobs:
+  style:
+    runs-on: ubuntu-latest
+    container:
+      image: crystallang/crystal
+    steps:
+      - uses: actions/checkout@v2
+      - name: Format
+        run: crystal tool format --check
+      - name: Lint
+        uses: crystal-ameba/github-action@v0.2.12
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   test:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - {os: ubuntu-latest, crystal: nightly}
-          - {os: ubuntu-latest, crystal: latest}
-          - {os: ubuntu-latest, crystal: 1.0.0}
-          - {os: ubuntu-latest, crystal: 0.36.1}
-          - {os: ubuntu-latest, crystal: 0.35.1}
-          - {os: ubuntu-latest, crystal: 0.34.0}
-    runs-on: ${{matrix.os}}
+        crystal:
+          - nightly
+          - latest
+          - 1.0.0
+          - 0.36.1
+          - 0.35.1
+          - 0.34.0
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     steps:
-      - run: sudo apt-get install redis-server
-      - run: sudo sed -e 's/^bind.*/bind 127.0.0.1/' /etc/redis/redis.conf > redis.conf
-      - run: sudo mv redis.conf /etc/redis
-      - run: sudo service redis-server start
       - uses: oprypin/install-crystal@v1
         with:
           crystal: ${{matrix.crystal}}
       - uses: actions/checkout@v2
       - run: shards install --ignore-crystal-version
-      - run: crystal tool format --check
       - run: make test
-
